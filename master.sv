@@ -11,7 +11,6 @@ module master (
     input        WREQ,   // from cpu, write request, signal cpu : dwe
     input        RREQ,   // from cpu, read request, signal cpu : dre
 
-    //output  SlvERR,
     output [31:0] Rdata,
     output        Ready,
 
