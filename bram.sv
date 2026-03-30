@@ -15,7 +15,7 @@ module bram (
     output logic        PREADY
 );
 
-    logic [31:0] bmem[0:1023];  // 1024 * 4byte
+    logic [31:0] bmem[0:1023];  // 1024 * 4byte > wordread > 1024
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
