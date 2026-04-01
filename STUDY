@@ -1,4 +1,13 @@
-AMBA APB
+AMBA
+AHB
+1. 고속 시스템 버스로 CPU, 메모리 등에 사용됨
+2. pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
+3. burst 전송, multi-master 지원 등 성능 중심
+APB
+1. 저속 주변장치용 버스 (UART, GPIO 등)
+2. non-pipeline 구조로 동작이 단순함
+3. 저전력, 저복잡도 → register access에 적합
+버스 : 데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
 Memory Map
 
@@ -11,7 +20,7 @@ ex) CPU Addr = 0x2010, Ram Addr= 0x0010. CPU Addr = 0x4001, 8255 Addr = 0x0001.
 offset 개념으로 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
 offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
 
-peripherals, ram 등을 제외하고 Memory Map에 많은 빈공간이 존재하는데,
+peripherals(slave), ram 등을 제외하고 Memory Map에 많은 빈공간이 존재하는데,
 빈 공간은 실제 메모리 낭비가 아니라, 주소 공간상에서 미할당 또는 미매핑된 영역이다.
 
 
