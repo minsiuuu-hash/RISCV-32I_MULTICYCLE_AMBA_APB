@@ -1,12 +1,12 @@
 AMBA BUS
 1. AHB
-  1. 고속 시스템 버스로 CPU, 메모리 등에 사용됨
-  2. pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
-  3. burst 전송, multi-master 지원 등 성능 중심
+  1) 고속 시스템 버스로 CPU, 메모리 등에 사용됨
+  2) pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
+  3) burst 전송, multi-master 지원 등 성능 중심
 2. APB
-  1. 저속 주변장치용 버스 (UART, GPIO 등)
-  2. non-pipeline 구조로 동작이 단순함
-  3. 저전력, 저복잡도 → register access에 적합
+  1) 저속 주변장치용 버스 (UART, GPIO 등)
+  2) non-pipeline 구조로 동작이 단순함
+  3) 저전력, 저복잡도 → register access에 적합
 3. BUS
   데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
