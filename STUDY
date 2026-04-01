@@ -1,16 +1,16 @@
-AMBA
-AHB
-1. 고속 시스템 버스로 CPU, 메모리 등에 사용됨
-2. pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
-3. burst 전송, multi-master 지원 등 성능 중심
-APB
-1. 저속 주변장치용 버스 (UART, GPIO 등)
-2. non-pipeline 구조로 동작이 단순함
-3. 저전력, 저복잡도 → register access에 적합
-버스 : 데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
+AMBA BUS
+1. AHB
+  1. 고속 시스템 버스로 CPU, 메모리 등에 사용됨
+  2. pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
+  3. burst 전송, multi-master 지원 등 성능 중심
+2. APB
+  1. 저속 주변장치용 버스 (UART, GPIO 등)
+  2. non-pipeline 구조로 동작이 단순함
+  3. 저전력, 저복잡도 → register access에 적합
+3. BUS
+  데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
 Memory Map
-
 CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
 주소의 상위 비트는 address decoding을 통해 특정 slave를 선택하는 Chip Select 역할을 하며,
 실제 slave 내부에서는 시작 주소를 기준으로 한 상대 주소, 즉 offset이 사용된다.
