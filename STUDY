@@ -7,6 +7,7 @@ AMBA BUS
   1) 저속 주변장치용 버스 (UART, GPIO 등)
   2) non-pipeline 구조로 동작이 단순함
   3) 저전력, 저복잡도 → register access에 적합
+  4) 동기 protocol, block회로, ready를 활용한 handshake
 3. BUS
   데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
