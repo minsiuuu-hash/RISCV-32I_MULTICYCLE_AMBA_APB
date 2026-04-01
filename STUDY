@@ -11,6 +11,12 @@ AMBA BUS
 3. BUS
   데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
+AHB FSM
+총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
+READ/WRITE를 구분하기 위해서 , ReadRequest/WriteRequest 신호를 활용.
+SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
+ACCESS STATE에서는 READY를 통해 HandShake함.
+
 Memory Map
 CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
 주소의 상위 비트는 address decoding을 통해 특정 slave를 선택하는 Chip Select 역할을 하며,
