@@ -2,3 +2,8 @@ AMBA APB
 
 Memory Map
 주소로서 I/O에 접근하는 방식.
+ChipSelect/ChipEnable을 활용해서 선택하고 싶은 slave를 선택도 가능하고,
+각 slave의 메모리공간을 어디서부터, 어디까지 지정할수있는지도 확인가능.
+ex) CPU Addr = 0x2010, Ram Addr= 0x0010. CPU Addr = 0x4001, 8255 Addr = 0x0001.
+offset 개념으로 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
+offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
