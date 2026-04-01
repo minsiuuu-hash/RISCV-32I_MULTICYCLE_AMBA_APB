@@ -1,9 +1,18 @@
 AMBA APB
 
 Memory Map
-주소로서 I/O에 접근하는 방식.
-ChipSelect/ChipEnable을 활용해서 선택하고 싶은 slave를 선택도 가능하고,
-각 slave의 메모리공간을 어디서부터, 어디까지 지정할수있는지도 확인가능.
+
+CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
+주소의 상위 비트는 address decoding을 통해 특정 slave를 선택하는 Chip Select 역할을 하며,
+실제 slave 내부에서는 시작 주소를 기준으로 한 상대 주소, 즉 offset이 사용된다.
+따라서 offset은 해당 slave의 base address로부터 얼마나 떨어져 있는가를 나타내는 값이다.
+
 ex) CPU Addr = 0x2010, Ram Addr= 0x0010. CPU Addr = 0x4001, 8255 Addr = 0x0001.
 offset 개념으로 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
 offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
+
+peripherals, ram 등을 제외하고 Memory Map에 많은 빈공간이 존재하는데,
+빈 공간은 실제 메모리 낭비가 아니라, 주소 공간상에서 미할당 또는 미매핑된 영역이다.
+
+
+
