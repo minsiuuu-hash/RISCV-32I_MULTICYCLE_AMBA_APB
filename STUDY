@@ -17,6 +17,9 @@ READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호를 활용.
 SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
 ACCESS STATE에서는 READY(PENABLE && PSELx)를 통해 HandShake함.
 
+Write = CPU > MASTER > SLAVE
+Read = SLAVE > MASTER > CPU
+
 Memory Map
 CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
 주소의 상위 비트는 address decoding을 통해 특정 slave를 선택하는 Chip Select 역할을 하며,
