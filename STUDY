@@ -11,7 +11,7 @@ AMBA BUS
 3. BUS
   데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
 
-AHB FSM
+APB FSM
 총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
 READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호를 활용.
 SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
