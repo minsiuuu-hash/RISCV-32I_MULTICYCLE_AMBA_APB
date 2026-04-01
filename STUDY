@@ -13,12 +13,12 @@ AMBA BUS
 
 APB FSM
 총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
-READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호를 활용.
+READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호(Transfer)를 활용하면서, PWRITE로 정함.
 SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
-ACCESS STATE에서는 READY(PENABLE && PSELx)를 통해 HandShake함.
+ACCESS STATE에서는 PREADY(PENABLE && PSELx)를 통해 HandShake함.
 
-Write = CPU > MASTER > SLAVE
-Read = SLAVE > MASTER > CPU
+Write = CPU > MASTER > SLAVE (SLAVE에 값을 저장, 그 값은 PWDATA를 통해 전달됨)
+Read = CPU > MASTER > SLAVE(저장되어있는 값을 PRDATA로 전달) > MASTER > CPU(RegisterFile에 저장)
 
 Memory Map
 CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
