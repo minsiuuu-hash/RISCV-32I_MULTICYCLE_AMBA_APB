@@ -77,9 +77,11 @@ pull-up / pull-down 저항
 
 GPI(General Purpose Input)
   외부 신호를 읽기만 하는 핀
+  EX) 버튼, 스위치, 센서의 디지털 출력, 외부 인터럽트 신호
 
 GPO(General Purpose Output)
   내부 값으로 외부 핀에 내보내기만 하는 핀
+  EX) LED, FND segment, 릴레이 on/ff 신호, 단순 enable 신호
 
 
 
