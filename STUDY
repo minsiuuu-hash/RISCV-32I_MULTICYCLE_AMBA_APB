@@ -48,16 +48,19 @@ offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
 peripherals(slave), ram 등을 제외하고 Memory Map에 많은 빈공간이 존재하는데,
 빈 공간은 실제 메모리 낭비가 아니라, 주소 공간상에서 미할당 또는 미매핑된 영역이다.
 
-gpi, gpo , gpio에 대한 설명 추가하기
-3state buffer? ( 0, 1, z)
-
-
-
 GPIO(General Purpose Input / Output)
   한 핀을 입력으로도 사용, 출력으로도 사용. 따라서 누가 입력을? 출력을? 즉 이 선을 누 잡고있어야하는지 선택해야함.
+  이를 제어하고자 3state buffer를 사용함.
     0 : 낮은 전압으로 강하게 끌어내림
     1 : 높은 전압으로 강하게 끌어올림
     Z : 나는 이 선에 아무 영향도 안 주겠음
+    ex)  genvar i;
+          generate
+              for (i = 0; i < 4; i = i + 1) begin
+                  assign io_port[i] = cr[i] ? odr[i] : 1'bz;  // output mode: drive odr, otherwise tri-state
+                  assign idr[i]     = cr[i] ? 1'bz : io_port[i];  // read current pin value
+              end
+          endgenerate
   출력모드 : FPGA가 외부로 0/1의 값을 내보냄
   입력모드 : FPGA가 값을 안거드리기 위해서 Z(High Impedence) 상태로 놔둠.
               assign io_port[i] = 1'bz;  >> FPGA는 io_port 값을 건드리지 않음.
@@ -71,6 +74,12 @@ pull-up / pull-down 저항
         선이 기본적으로 1이 되도록 약하게 끌어올리는 저항.
     PULL-DOWN 저항
         선이 기본적으로 0이 되도록 약하게 끌어내리는 저항.
+
+GPI(General Purpose Input)
+  외부 신호를 읽기만 하는 핀
+
+GPO(General Purpose Output)
+  내부 값으로 외부 핀에 내보내기만 하는 핀
 
 
 
