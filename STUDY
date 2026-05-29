@@ -1,9 +1,9 @@
-AMBA BUS
-1. AHB
+AMBA BUS(Advanced Microcontroller Bus Architecture)
+1. AHB(Advanced High-performance Bus)
   1) 고속 시스템 버스로 CPU, 메모리, GPIO 등에 사용됨
   2) pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
   3) burst 전송, multi-master 지원 등 성능 중심
-2. APB
+2. APB(Advanced Peripheral Bus)
   1) 저속 주변장치용 버스 (UART, SPI, I2C 등)
   2) non-pipeline 구조로 동작이 단순함
   3) 저전력, 저복잡도 → register access에 적합
