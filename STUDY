@@ -42,6 +42,8 @@ CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
 따라서 offset은 해당 slave의 base address로부터 얼마나 떨어져 있는가를 나타내는 값이다.
 
 ex) CPU Addr = 0x2010, Ram Addr= 0x0010. CPU Addr = 0x4001, 8255 Addr = 0x0001.
+    CPU Addr - Ram Addr = 0x2000으로 RAM Memory Map 시작 주소 = 0x2000
+    CPU Addr - 8255 Addr = 0x4000으로 8255 Memory Map 시작 주소 = 0x4000
 offset 개념으로 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
 offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
 
