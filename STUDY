@@ -51,7 +51,7 @@ peripherals(slave), ram 등을 제외하고 Memory Map에 많은 빈공간이 �
 빈 공간은 실제 메모리 낭비가 아니라, 주소 공간상에서 미할당 또는 미매핑된 영역이다.
 
 GPIO(General Purpose Input / Output)
-  한 핀을 입력으로도 사용, 출력으로도 사용. 따라서 누가 입력을? 출력을? 즉 이 선을 누 잡고있어야하는지 선택해야함.
+  한 핀을 입력으로도 사용, 출력으로도 사용. 따라서 누가 입력을? 출력을? 즉 이 선을 누가 잡고있어야하는지 선택해야함.
   이를 제어하고자 3state buffer를 사용함.
     0 : 낮은 전압으로 강하게 끌어내림
     1 : 높은 전압으로 강하게 끌어올림
@@ -64,7 +64,7 @@ GPIO(General Purpose Input / Output)
               end
           endgenerate
   출력모드 : FPGA가 외부로 0/1의 값을 내보냄
-  입력모드 : FPGA가 값을 안거드리기 위해서 Z(High Impedence) 상태로 놔둠.
+  입력모드 : FPGA가 값을 안건들이기 위해서 Z(High Impedence) 상태로 놔둠.
               assign io_port[i] = 1'bz;  >> FPGA는 io_port 값을 건드리지 않음.
               assign idr[i] = io_port[i]; >> 외부의 값을 받아서 idr에 값을 넣음.
 
