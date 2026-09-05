@@ -8,6 +8,7 @@ AMBA BUS (Advanced Microcontroller Bus Architecture)
 2) CPU, Memory, Peripheral 등 여러 장치가 데이터를 주고받기 위한 통신 경로.
 3) 여러 Slave가 연결되어 있어도 Address Decoder에 의해 선택된 Slave만 해당 Transaction에 반응.
 4) SoC에서는 하나의 Bus만 사용하는 것이 아니라 성능과 용도에 따라 AXI, AHB, APB 등을 함께 사용하기도 함.
+BUS/Interconnect를 사용하면 여러 IP가 정해진 Protocol에 따라 통신할 수 있어 연결 구조와 확장, 제어, 검증이 쉬워진다.
 
 2. AHB (Advanced High-performance Bus)
 1) 비교적 고속의 시스템 버스로 CPU, Memory, DMA, Peripheral 등에 사용.
@@ -203,21 +204,6 @@ APB < AHB < AXI
 
 ==============================================================================================
 
-BUS 사용안할 경우 생기는 문제
-  장치가 늘어날수록 배선이 폭발적으로 증가
-  각 장치마다 통신 방식이 달라짐
-  CPU가 모든 장치의 세부 연결을 알아야 함
-  새 장치 추가가 어려움
-  여러 장치가 동시에 접근할 때 충돌 처리 어려움
-  검증이 어려움
-사용하면
-  공용 연결 구조 사용
-  주소 기반으로 장치 선택
-  데이터/제어 신호 공유
-  장치 추가 쉬움
-  충돌 관리 가능
-  통신 규칙 단순화
-  
 APB FSM
 총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
 READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호(Transfer)를 활용하면서, PWRITE로 정함.
