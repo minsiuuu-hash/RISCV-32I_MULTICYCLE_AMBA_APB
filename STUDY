@@ -1,16 +1,208 @@
-AMBA BUS(Advanced Microcontroller Bus Architecture)
-1. AHB(Advanced High-performance Bus)
-  1) 고속 시스템 버스로 CPU, 메모리, GPIO 등에 사용됨
-  2) pipeline 구조로 주소/데이터를 겹쳐 처리 → 높은 throughput
-  3) burst 전송, multi-master 지원 등 성능 중심
-2. APB(Advanced Peripheral Bus)
-  1) 저속 주변장치용 버스 (UART, SPI, I2C 등)
-  2) non-pipeline 구조로 동작이 단순함
-  3) 저전력, 저복잡도 → register access에 적합
-  4) 동기 protocol, block회로, ready를 활용한 handshake
-3. BUS
-  데이터, 주소, 제어신호 선들을 묶어서 부르는 말. 여러 장치가 같은 통로를 공유하지만, 실제로는 선택된 장치만 반응.
-  
+AMBA BUS (Advanced Microcontroller Bus Architecture)
+= ARM에서 정의한 SoC 내부 통신용 버스 규격.
+= CPU, Memory, Peripheral 등 여러 IP(Block) 사이에서 Address/Data/Control 신호를 주고받기 위한 Protocol.
+= 대표적으로 AHB, APB, AXI가 사용됨.
+
+1. BUS
+1) 데이터(Data), 주소(Address), 제어(Control) 신호들의 묶음을 의미.
+2) CPU, Memory, Peripheral 등 여러 장치가 데이터를 주고받기 위한 통신 경로.
+3) 여러 Slave가 연결되어 있어도 Address Decoder에 의해 선택된 Slave만 해당 Transaction에 반응.
+4) SoC에서는 하나의 Bus만 사용하는 것이 아니라 성능과 용도에 따라 AXI, AHB, APB 등을 함께 사용하기도 함.
+
+2. AHB (Advanced High-performance Bus)
+1) 비교적 고속의 시스템 버스로 CPU, Memory, DMA, Peripheral 등에 사용.
+2) Address Phase와 Data Phase를 겹쳐 처리하는 Pipeline 구조.
+   → 이전 Transaction의 Data 전송 중 다음 Transaction의 Address 전달 가능.
+   → Throughput 향상.
+3) Burst Transfer 지원.
+   → 여러 개의 연속된 데이터를 한 번의 주소 흐름으로 전송 가능.
+4) Multi-Master 구조 지원 가능.
+   → CPU, DMA 등 여러 Master가 하나의 Bus를 사용할 수 있음.
+   → Arbitration을 통해 어느 Master가 Bus를 사용할지 결정.
+5) AXI보다 구조가 단순하지만 APB보다는 성능과 구조가 복잡함.
+6) 대표 신호
+   * HADDR  : Address
+   * HWDATA : Write Data
+   * HRDATA : Read Data
+   * HWRITE : Read / Write 구분
+   * HREADY : Transfer 완료 여부
+   * HRESP  : Transfer Response
+정리: APB보다 높은 성능이 필요한 시스템 통신에 사용하며, Pipeline과 Burst를 통해 높은 Throughput을 얻을 수 있음.
+
+3. APB (Advanced Peripheral Bus)
+1) 저속 Peripheral용 버스.
+   → UART, SPI, I2C, GPIO, Timer 등의 Register Access에 주로 사용.
+2) 구조가 단순하고 저전력, 저복잡도가 특징.
+3) Pipeline을 사용하지 않는 Non-Pipeline 구조.
+4) 기본적으로 하나의 Transfer가 SETUP → ACCESS 단계로 진행됨.
+   IDLE
+   ↓
+   SETUP
+   ↓
+   ACCESS
+   ↓
+   IDLE 또는 다음 SETUP
+5) SETUP Phase
+   * PADDR, PWRITE, PWDATA 등의 신호 설정
+   * PSEL = 1
+   * PENABLE = 0
+6) ACCESS Phase
+   * PENABLE = 1
+   * Slave가 PREADY = 1을 출력하면 Transaction 완료
+   * PREADY = 0이면 ACCESS 상태에서 대기(Wait State)
+7) 대표 신호
+   * PADDR    : Address
+   * PWRITE   : Read / Write 구분
+   * PWDATA   : Write Data
+   * PRDATA   : Read Data
+   * PSEL     : Slave 선택
+   * PENABLE  : ACCESS Phase 표시
+   * PREADY   : Transfer 완료 여부
+   * PSLVERR  : Slave Error
+8) APB는 대부분 Register Access가 목적이기 때문에 복잡한 Burst나 Pipeline 기능이 필요하지 않음.
+
+정리: 높은 성능보다 구조의 단순성과 저전력이 중요한 Peripheral에 사용하며, SETUP → ACCESS의 간단한 구조로 동작.
+
+4. AXI (Advanced eXtensible Interface)
+1) AMBA에서 사용하는 고성능 Bus Protocol.
+2) CPU, DDR Memory Controller, DMA, 고성능 IP 등 대용량 데이터 전송에 사용.
+3) AHB와 가장 큰 차이점 중 하나는 Address/Data/Response가 각각 독립된 Channel로 분리되어 있다는 것.
+
+AXI의 5개 Channel
+- AW : Write Address Channel
+- W  : Write Data Channel
+- B  : Write Response Channel
+- AR : Read Address Channel
+- R  : Read Data Channel
+
+4) Read와 Write Channel이 독립적이기 때문에 Read/Write Transaction을 병렬적으로 처리 가능.
+5) VALID / READY Handshake 방식 사용.
+   VALID = 보내는 쪽에서 "유효한 데이터가 있다."
+   READY = 받는 쪽에서 "받을 준비가 됐다."
+   VALID = 1 && READY = 1
+   → 해당 Clock에서 Transfer 발생.
+6) Burst Transfer 지원.
+   → 하나의 Address Transaction 이후 여러 Data Beat를 연속 전송 가능.
+7) 여러 Transaction을 동시에 진행할 수 있어 높은 Throughput을 얻을 수 있음.
+8) AHB/APB보다 성능은 높지만 구현 구조도 복잡함.
+
+정리: 고성능이 필요한 CPU, Memory, DMA, Accelerator 등의 통신에 사용하며, 독립적인 5개 Channel과 VALID/READY Handshake를 사용하는 것이 특징.
+
+5. AXI 종류
+1) AXI4
+   * Full AXI Protocol.
+   * Burst 지원.
+   * 고성능 Memory/Data Transfer에 적합.
+   * CPU ↔ DDR, DMA ↔ Memory 등에 사용.
+2) AXI4-Lite
+   * AXI4를 단순화한 형태.
+   * Burst 지원 X.
+   * 한 Transaction에 하나의 Data Transfer.
+   * IP 내부 Register 제어에 많이 사용.
+   * Control/Status Register Access에 적합.
+3) AXI4-Stream
+   * Address 개념이 없는 Streaming 방식.
+   * 연속적인 Data 전송에 특화.
+   * 영상, DSP, Network Packet 등 대용량 연속 데이터 처리에 사용.
+   * 대표 신호
+     TVALID : 보내는 데이터가 유효
+     TREADY : 받을 준비 완료
+     TDATA  : Data
+     TLAST  : Packet/Frame의 마지막 Data 표시
+
+6. AHB / APB / AXI 비교
+                    AHB                 APB                 AXI
+용도              시스템 통신          저속 Peripheral      고성능 시스템 통신
+성능              중~고속              저속                 고속
+구조              중간                 단순                 복잡
+Pipeline          O                    X                    O
+Burst             O                    X                    O
+Handshake         HREADY 중심          PREADY 중심          VALID / READY
+주 사용처          CPU, Memory, DMA     UART, GPIO, Timer    CPU, DDR, DMA
+채널 분리          X                    X                    O
+병렬 처리 능력      제한적               거의 없음             높음
+
+7. 일반적인 SoC 구조 예시
+CPU / Processor
+│
+AXI
+│
+┌────┴─────┐
+│          │
+DDR        DMA
+│
+AXI / AHB
+│
+Bridge
+│
+APB
+│
+├── UART
+├── GPIO
+├── SPI
+├── I2C
+└── TIMER
+
+→ 성능이 필요한 구간에서는 AXI/AHB를 사용하고, 단순한 Peripheral Register Access에는 APB를 사용하는 구조가 일반적.
+
+8. Master / Slave
+Master
+= Transaction을 시작하는 장치.
+= Address와 Control 정보를 발생시킴.
+예) CPU, DMA
+
+Slave
+= Master의 요청을 받아 처리하는 장치.
+예) Memory, UART, GPIO, Timer
+
+예)
+CPU가 UART Register에 데이터를 Write
+
+CPU (Master)
+↓
+Address + Write Data
+↓
+UART (Slave)
+
+9. Address Decoder
+   = Master가 보낸 Address를 확인하여 어떤 Slave에 접근하는지 결정하는 회로.
+
+예)
+0x0000 ~ 0x0FFF : RAM
+0x1000 ~ 0x10FF : UART
+0x2000 ~ 0x20FF : GPIO
+
+CPU가 0x1004에 Write
+→ Address Decoder가 UART 영역이라고 판단
+→ UART Slave만 선택됨.
+
+10. 핵심 정리
+AMBA
+= SoC 내부 IP 간 통신을 위한 ARM의 Bus Architecture.
+
+APB
+= 저속 / 단순 / Peripheral Register Access
+= SETUP → ACCESS
+= PREADY를 통해 Transfer 완료 확인.
+
+AHB
+= APB보다 고성능
+= Address/Data Pipeline
+= Burst 지원.
+
+AXI
+= 고성능 SoC Bus
+= Read/Write 각각 독립 Channel
+= VALID / READY Handshake
+= Burst 및 높은 병렬 처리 성능.
+
+성능 및 복잡도
+APB < AHB < AXI
+
+단, AXI가 항상 가장 좋은 것이 아니라 용도에 맞게 적절한 Bus를 선택하는 것이 중요함.
+
+==============================================================================================
+
 BUS 사용안할 경우 생기는 문제
   장치가 늘어날수록 배선이 폭발적으로 증가
   각 장치마다 통신 방식이 달라짐
