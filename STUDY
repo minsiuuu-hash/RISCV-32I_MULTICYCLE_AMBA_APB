@@ -238,7 +238,7 @@ GPIO(General Purpose Input / Output)
           generate
               for (i = 0; i < 4; i = i + 1) begin
                   assign io_port[i] = cr[i] ? odr[i] : 1'bz;  // output mode: drive odr, otherwise tri-state
-                  assign idr[i]     = cr[i] ? 1'bz : io_port[i];  // read current pin value
+                  assign idr[i]     = cr[i] ? 1'bz : io_port[i];  // input mode : read current pin value
               end
           endgenerate
   출력모드 : FPGA가 외부로 0/1의 값을 내보냄
