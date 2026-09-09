@@ -319,7 +319,7 @@ APB는 Burst는 없지만 Back-to-Back Transfer는 가능하고, 같은 Slave라
 - ACCESS 단계에서 PREADY=1이면 현재 Transfer 완료
 - 다음 요청이 이미 존재하면 IDLE State로 돌아갈 필요 없이 바로 다음 SETUP으로 이동 가능
 - 즉, SETUP1 → ACCESS1 → SETUP2 → ACCESS2 형태로 연속 Transfer 가능
-1. 같은 Slave를 연속 접근하는 경우
+1) 같은 Slave를 연속 접근하는 경우
 - 같은 Slave를 계속 선택하므로 PSEL은 계속 High로 유지 가능
 - 새로운 Transfer이므로 PENABLE은 다시 0이 되어 SETUP Phase를 거친 뒤 ACCESS에서 다시 1
 - 주소는 다음 SETUP 단계에서 새로운 주소로 변경 가능
@@ -329,7 +329,7 @@ PSEL          1         1         1         1
 PENABLE       0         1         0         1
 PADDR       Addr1     Addr1     Addr2     Addr2
 
-2. 다른 Slave를 연속 접근하는 경우
+2) 다른 Slave를 연속 접근하는 경우
 - 다음 SETUP 단계에서 새로운 주소를 Decode
 - 기존 Slave의 PSEL은 0으로 변경
 - 새로운 Slave의 PSEL을 1로 활성화
@@ -340,25 +340,28 @@ PSEL0         1         1         0         0
 PSEL1         0         0         1         1
 PENABLE       0         1         0         1
 
-3. IDLE State가 필요한 경우
+3) IDLE State가 필요한 경우
 - 다음 Transfer 요청이 없을 때 ACCESS 완료 후 IDLE로 이동
 다음 요청 있음 : ACCESS → SETUP
 다음 요청 없음 : ACCESS → IDLE
 
-4. Burst와의 차이
+4) Burst와의 차이
 - APB에는 Burst 기능이 없음
 - 연속 전송은 Burst가 아니라 Back-to-Back Transfer
 - 각각의 데이터 전송은 독립적인 APB Transfer
 - 각 Transfer마다 SETUP → ACCESS Phase를 다시 수행
 - 단지 Transfer 사이에 IDLE State를 넣지 않고 연속으로 수행하는 것
 
-5. 내 APB Master 구현
+5) 내 APB Master 구현
 - 현재 구현 : IDLE → SETUP → ACCESS → IDLE
 - PREADY=1로 Transfer가 완료되면 항상 IDLE로 복귀하도록 구현
 - 더 효율적으로 확장한다면 ACCESS에서 다음 요청 존재 여부를 확인하여
 다음 요청 있음 : ACCESS → SETUP
 다음 요청 없음 : ACCESS → IDLE
 형태로 Back-to-Back Transfer를 지원할 수 있음
+
+4. 각 Slave의 Address Range에 이제 사용하지 않는 주소들 즉 register가 없는 주소들이 존재할텐데, 그 주소를 실행하면 어떻게 되나요??
+코드 구조상, 존재하지않는 주소를 사용하게 된다면 default값인 0으로 들어가서 ..? 그다음 뭐지
 
 
 
