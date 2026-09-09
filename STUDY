@@ -276,7 +276,51 @@ C → RISC-V Compiler → Assembly → Assembler → Machine Code → .mem → I
 
 3. APB Master짤때, PSEL,PENABLE 활성화 시키는 걸 계속 반복해도 되는거아닌가요?? (IDLE > SETUP > ACCESS > SETUP > ACCESS) 이런식으로 설계한다는 말인듯??
 APB는 Burst는 없지만 Back-to-Back Transfer는 가능하고, 같은 Slave라면 PSEL을 계속 유지할 수 있다. 다만 Transfer마다 SETUP/ACCESS는 새로 수행하며, Slave가 바뀌면 PSEL도 바뀐다.
+[ APB Back-to-Back Transfer ]
+- APB의 기본 Transfer는 SETUP → ACCESS 순서로 진행
+- ACCESS 단계에서 PREADY=1이면 현재 Transfer 완료
+- 다음 요청이 이미 존재하면 IDLE State로 돌아갈 필요 없이 바로 다음 SETUP으로 이동 가능
+- 즉, SETUP1 → ACCESS1 → SETUP2 → ACCESS2 형태로 연속 Transfer 가능
+1. 같은 Slave를 연속 접근하는 경우
+- 같은 Slave를 계속 선택하므로 PSEL은 계속 High로 유지 가능
+- 새로운 Transfer이므로 PENABLE은 다시 0이 되어 SETUP Phase를 거친 뒤 ACCESS에서 다시 1
+- 주소는 다음 SETUP 단계에서 새로운 주소로 변경 가능
+예)
+            SETUP1   ACCESS1   SETUP2   ACCESS2
+PSEL          1         1         1         1
+PENABLE       0         1         0         1
+PADDR       Addr1     Addr1     Addr2     Addr2
 
+2. 다른 Slave를 연속 접근하는 경우
+- 다음 SETUP 단계에서 새로운 주소를 Decode
+- 기존 Slave의 PSEL은 0으로 변경
+- 새로운 Slave의 PSEL을 1로 활성화
+- Slave가 바뀌더라도 반드시 IDLE State를 거칠 필요는 없음
+예)
+            SETUP1   ACCESS1   SETUP2   ACCESS2
+PSEL0         1         1         0         0
+PSEL1         0         0         1         1
+PENABLE       0         1         0         1
+
+3. IDLE State가 필요한 경우
+- 다음 Transfer 요청이 없을 때 ACCESS 완료 후 IDLE로 이동
+다음 요청 있음 : ACCESS → SETUP
+다음 요청 없음 : ACCESS → IDLE
+
+4. Burst와의 차이
+- APB에는 Burst 기능이 없음
+- 연속 전송은 Burst가 아니라 Back-to-Back Transfer
+- 각각의 데이터 전송은 독립적인 APB Transfer
+- 각 Transfer마다 SETUP → ACCESS Phase를 다시 수행
+- 단지 Transfer 사이에 IDLE State를 넣지 않고 연속으로 수행하는 것
+
+5. 내 APB Master 구현
+- 현재 구현 : IDLE → SETUP → ACCESS → IDLE
+- PREADY=1로 Transfer가 완료되면 항상 IDLE로 복귀하도록 구현
+- 더 효율적으로 확장한다면 ACCESS에서 다음 요청 존재 여부를 확인하여
+다음 요청 있음 : ACCESS → SETUP
+다음 요청 없음 : ACCESS → IDLE
+형태로 Back-to-Back Transfer를 지원할 수 있음
 
 
 
