@@ -206,6 +206,7 @@ APB < AHB < AXI
 Burst
 = 한 번의 Burst 요청으로 여러 개의 Data Beat를 연속 전송하는 기능
 = 시작 주소와 Burst 정보를 한 번 전달하고, 이후 여러 Beat를 연속으로 전송한다
+Master -> Transaction 시작 -> 주소 + Burst 관련 정보 전달 -> Slave / Interconnect가 해석 -> 몇 Beat인지 -> Beat 크기가 얼마인지 -> 주소가 FIXED / INCR / WRAP인지 판단 -> 그 규칙대로 Data Transfer 진행
 
 Beat
 = Burst 내부에서 한 번의 데이터 전송 단위
