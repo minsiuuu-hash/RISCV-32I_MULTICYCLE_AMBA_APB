@@ -202,6 +202,44 @@ APB < AHB < AXI
 
 단, AXI가 항상 가장 좋은 것이 아니라 용도에 맞게 적절한 Bus를 선택하는 것이 중요함.
 
+[ Burst ]
+Burst
+= 한 번의 Burst 요청으로 여러 개의 Data Beat를 연속 전송하는 기능
+= 시작 주소와 Burst 정보를 한 번 전달하고, 이후 여러 Beat를 연속으로 전송한다
+
+Beat
+= Burst 내부에서 한 번의 데이터 전송 단위
+
+대표적인 Burst Type
+1. FIXED : 주소 유지
+2. INCR  : 주소 증가
+3. WRAP  : 일정 주소 범위 안에서 증가 후 처음으로 돌아감
+
+AHB
+- HBURST로 Burst 종류 지정
+- 첫 Transfer : NONSEQ
+- 이후 Transfer : SEQ
+- INCR4, INCR8, INCR16, WRAP4 등 지원
+
+AXI
+- AWADDR / ARADDR : 시작 주소
+- AWLEN / ARLEN   : Burst Length
+- AWSIZE / ARSIZE : 한 Beat의 데이터 크기
+- AWBURST / ARBURST : FIXED / INCR / WRAP
+- 마지막 Beat는 WLAST / RLAST로 표시
+
+APB
+- Burst 기능 없음
+- Back-to-Back Transfer는 가능
+- 각각의 SETUP → ACCESS가 독립적인 Transfer
+
+핵심 차이
+APB Back-to-Back
+= 독립적인 Transfer를 IDLE 없이 연속 수행
+
+AHB/AXI Burst
+= 여러 Data Beat를 하나의 Burst로 묶어 연속 수행
+
 ==============================================================================================
 
 APB FSM
