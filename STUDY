@@ -264,9 +264,17 @@ GPO(General Purpose Output)
   내부 값으로 외부 핀에 내보내기만 하는 핀
   EX) LED, FND segment, 릴레이 on/ff 신호, 단순 enable 신호
 
+-------------------------------------------------------------------------------------
+면접 예상 질문
+1. Single > Multi 만들때, Register는 왜 저기에다가 추가한거에요? 목적??
+“Multi-Cycle에서는 명령어 수행이 여러 Clock에 걸쳐 진행되기 때문에, 이전 State에서 생성한 값을 다음 State에서도 사용하려면 중간에 Register에 저장해둘 필요가 있습니다. 그래서 실제로 다음 단계에서 계속 필요한 값이 있는 경계에 Register를 추가했습니다.
+Decode에서 읽은 RS1, RS2와 생성한 Immediate는 Execute 단계에서 필요하기 때문에 Decode와 Execute 사이에 저장했고, Execute에서 계산한 ALU Result와 Store Data인 RS2는 MEM 단계에서 필요하기 때문에 Execute와 MEM 사이에 저장했습니다. Load의 경우 MEM에서 읽은 DRDATA를 WB 단계에서 Register File에 써야 하므로 MEM과 WB 사이에 저장했습니다. PC 경로도 계산된 다음 PC 값을 필요한 시점까지 유지하기 위해 Register를 추가했습니다.”
 
+2. “동일 C 코드로 작동했다고 했는데, C를 Assembly로 바꾸고 .mem 파일로 만들면 명령어마다 Binary 값이 다르잖아요. 그걸 직접 일일이 해석한 건가요? 그리고 Vivado Simulation은 이상적인데 어떻게 최적 Clock Period를 구한 건가요?”
+C → RISC-V Compiler → Assembly → Assembler → Machine Code → .mem → Instruction Memory
+“Implementation 이후 Timing Report에서는 FPGA에 배치·배선된 결과를 기반으로 C2Q, Logic Delay, Routing Delay와 Setup 조건, Clock Skew/Uncertainty 등을 고려해서 STA를 수행하고 WNS를 계산합니다. 그래서 저는 XDC의 Clock Period를 줄여가며 WNS가 Negative가 되지 않는 범위를 확인했습니다.”
 
-
+3. APB Master짤때, PSEL이나 PENABLE를 2CLOCK으로 잡아서 해도 되지않나요??
 
 
 
