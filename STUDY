@@ -274,7 +274,8 @@ Decode에서 읽은 RS1, RS2와 생성한 Immediate는 Execute 단계에서 필�
 C → RISC-V Compiler → Assembly → Assembler → Machine Code → .mem → Instruction Memory
 “Implementation 이후 Timing Report에서는 FPGA에 배치·배선된 결과를 기반으로 C2Q, Logic Delay, Routing Delay와 Setup 조건, Clock Skew/Uncertainty 등을 고려해서 STA를 수행하고 WNS를 계산합니다. 그래서 저는 XDC의 Clock Period를 줄여가며 WNS가 Negative가 되지 않는 범위를 확인했습니다.”
 
-3. APB Master짤때, PSEL이나 PENABLE를 2CLOCK으로 잡아서 해도 되지않나요??
+3. APB Master짤때, PSEL,PENABLE 활성화 시키는 걸 계속 반복해도 되는거아닌가요?? (IDLE > SETUP > ACCESS > SETUP > ACCESS) 이런식으로 설계한다는 말인듯??
+APB는 Burst는 없지만 Back-to-Back Transfer는 가능하고, 같은 Slave라면 PSEL을 계속 유지할 수 있다. 다만 Transfer마다 SETUP/ACCESS는 새로 수행하며, Slave가 바뀌면 PSEL도 바뀐다.
 
 
 
