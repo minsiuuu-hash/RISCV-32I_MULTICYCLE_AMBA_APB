@@ -113,14 +113,15 @@ module control_unit (
                         end
                     end
                     `IL_TYPE: begin
-                        n_state = WB;
+                        if (ready) begin
+                            n_state = WB;
+                        end
                     end
                 endcase
             end
             WB: begin
-                if (ready) begin
-                    n_state = FETCH;
-                end
+                // The load response was captured at the end of MEM.
+                n_state = FETCH;
             end
         endcase
     end
@@ -198,19 +199,14 @@ module control_unit (
                 o_funct3 = funct3;
                 if (opcode == `S_TYPE) begin
                     dwe = 1'b1;
-                end else begin
+                end else if (opcode == `IL_TYPE) begin
                     dre = 1'b1;
                 end
             end
             WB: begin
-                // IL TYPE
+                // Write the captured load data one clock after completion.
                 rfwd_src = 3'b001;
-                //rf_we    = 1'b1;
-                if (ready) begin
-                    rf_we = 1'b1;
-                end else begin
-                    rf_we = 1'b0;
-                end
+                rf_we    = 1'b1;
             end
         endcase
     end

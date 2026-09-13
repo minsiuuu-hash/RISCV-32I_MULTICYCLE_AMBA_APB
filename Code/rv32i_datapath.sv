@@ -125,12 +125,13 @@ module rv32i_datapath (
         .data_out(o_exe_rs2)  // to dmem_wdata
     );
 
-    // mem to write back
+    // Sample every clock. MEM completion captures the load data;
+    // the following WB edge writes its pre-edge value to the register file.
     register U_MEM_REG_DRDATA (
         .clk(clk),
         .rst(rst),
-        .data_in(bus_rdata),  // from alu result
-        .data_out(o_mem_drdata)  // to dmem_wdata
+        .data_in(bus_rdata),
+        .data_out(o_mem_drdata)
     );
 
 

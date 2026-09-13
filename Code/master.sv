@@ -55,6 +55,15 @@ module master (
     logic [31:0] PAddr_next, PWData_next;
     logic PWRITE_next;
 
+    // synthesis translate_off
+    always @(posedge PCLK) begin
+        if (!PRESET && PENABLE &&
+            ({PSEL5, PSEL4, PSEL3, PSEL2, PSEL1, PSEL0} == 6'b0))
+            $warning("APB: unmapped address %h (write=%b); completing with zero data",
+                     PAddr, PWRITE);
+    end
+    // synthesis translate_on
+
     // SL
     always_ff @(posedge PCLK, posedge PRESET) begin
         if (PRESET) begin
@@ -123,7 +132,8 @@ module master (
     );
 
     apb_mux U_APB_MUX (
-        .sel    (PAddr),
+        .sel    ({PSEL5, PSEL4, PSEL3, PSEL2, PSEL1, PSEL0}),
+        .access (PENABLE),
         .PRDATA0(PRDATA0),  // RAM
         .PRDATA1(PRDATA1),  // GPO
         .PRDATA2(PRDATA2),  // GPI
@@ -161,19 +171,15 @@ module addr_decoder (
         psel4 = 1'b0;  // idle : 0 FND
         psel5 = 1'b0;  // idle : 0 UART
         if (en) begin
-            case (addr[31:28])
-                4'h1: begin
-                    psel0 = 1'b1;  //RAM
-                end
-                4'h2: begin
-                    case (addr[15:12])
-                        4'h0: psel1 = 1'b1;  //GPO
-                        4'h1: psel2 = 1'b1;  //GPI
-                        4'h2: psel3 = 1'b1;  //GPIO
-                        4'h3: psel4 = 1'b1;  //FND
-                        4'h4: psel5 = 1'b1;  //UART
-                    endcase
-                end
+            // Each slave occupies exactly one 4 KiB page.
+            case (addr[31:12])
+                20'h10000: psel0 = 1'b1;  // RAM
+                20'h20000: psel1 = 1'b1;  // GPO
+                20'h20001: psel2 = 1'b1;  // GPI
+                20'h20002: psel3 = 1'b1;  // GPIO
+                20'h20003: psel4 = 1'b1;  // FND
+                20'h20004: psel5 = 1'b1;  // UART
+                default: ;  // Unmapped: no physical slave selected.
             endcase
         end
     end
@@ -181,7 +187,8 @@ module addr_decoder (
 endmodule
 
 module apb_mux (
-    input [31:0] sel,
+    input [5:0] sel,
+    input       access,
 
     input [31:0] PRDATA0,  // RAM
     input [31:0] PRDATA1,  // GPO
@@ -202,41 +209,40 @@ module apb_mux (
 );
 
     always_comb begin
-        Rdata = 32'h0000_0000;  // idle : 0 RAM
+        Rdata = 32'h0000_0000;
         Ready = 1'b0;
-        case (sel[31:28])
-            4'h1: begin
+        // Use the decoder's one-hot selection for both response signals.
+        // Keep read data available in SETUP; only complete during ACCESS.
+        case (sel)
+            6'b000001: begin
                 Rdata = PRDATA0;
-                Ready = PREADY0;
+                Ready = access && PREADY0;
             end
-            4'h2: begin
-                case (sel[15:12])
-                    4'h0: begin
-                        Rdata = PRDATA1;
-                        Ready = PREADY1;
-                    end
-                    4'h1: begin
-                        Rdata = PRDATA2;
-                        Ready = PREADY2;
-                    end
-                    4'h2: begin
-                        Rdata = PRDATA3;
-                        Ready = PREADY3;
-                    end
-                    4'h3: begin
-                        Rdata = PRDATA4;
-                        Ready = PREADY4;
-                    end
-                    4'h4: begin
-                        Rdata = PRDATA5;
-                        Ready = PREADY5;
-                    end
-                    default: begin
-                        Rdata = 32'hxxxx_xxxx;
-                        Ready = 1'bx;
-                    end
-                endcase
+            6'b000010: begin
+                Rdata = PRDATA1;
+                Ready = access && PREADY1;
             end
+            6'b000100: begin
+                Rdata = PRDATA2;
+                Ready = access && PREADY2;
+            end
+            6'b001000: begin
+                Rdata = PRDATA3;
+                Ready = access && PREADY3;
+            end
+            6'b010000: begin
+                Rdata = PRDATA4;
+                Ready = access && PREADY4;
+            end
+            6'b100000: begin
+                Rdata = PRDATA5;
+                Ready = access && PREADY5;
+            end
+            6'b000000: begin
+                // Default response: read zero / ignore writes, no wait forever.
+                Ready = access;
+            end
+            default: ;
         endcase
     end
 

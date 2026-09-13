@@ -25,6 +25,13 @@ module gpi (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
+    // synthesis translate_off
+    always @(posedge PCLK) begin
+        if (!PRESET && PREADY && !(PAddr[11:0] == GPI_CTL_ADDR || PAddr[11:0] == GPI_IDATA_ADDR))
+            $warning("GPI: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
+    end
+    // synthesis translate_on
+
     always_ff @(posedge PCLK, posedge PRESET) begin
         if (PRESET) begin
             GPI_CTL_REG <= 8'h00;

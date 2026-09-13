@@ -25,7 +25,14 @@ module fnd (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
-    assign PRDATA = (PAddr[11:0] == FND_ADDR) ? {16'h0000,FND_ODATA_REG} : 32'hxxxx_xxxx;
+    // synthesis translate_off
+    always @(posedge PCLK) begin
+        if (!PRESET && PREADY && !(PAddr[11:0] == FND_ADDR))
+            $warning("FND: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
+    end
+    // synthesis translate_on
+
+    assign PRDATA = (PAddr[11:0] == FND_ADDR) ? {16'h0000,FND_ODATA_REG} : 32'h0000_0000;
 
     always_ff @(posedge PCLK, posedge PRESET) begin
         if (PRESET) begin

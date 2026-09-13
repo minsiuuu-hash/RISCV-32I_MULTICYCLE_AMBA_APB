@@ -31,6 +31,13 @@ module uart (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
+    // synthesis translate_off
+    always @(posedge PCLK) begin
+        if (!PRESET && PREADY && !(PAddr[11:0] == UART_CTL_ADDR || PAddr[11:0] == UART_BAUD_ADDR || PAddr[11:0] == UART_STATUS_ADDR || PAddr[11:0] == UART_TXDATA_ADDR || PAddr[11:0] == UART_RXDATA_ADDR))
+            $warning("UART: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
+    end
+    // synthesis translate_on
+
     assign TX_IN = UART_TXDATA_REG;
     assign BPS = UART_BAUD_REG;
 
@@ -39,7 +46,7 @@ module uart (
                     (PAddr[11:0] == UART_STATUS_ADDR) ? {24'h00_0000, {UART_RX_DONE_REG, 6'b0, TX_BUSY}} :
                     (PAddr[11:0] == UART_TXDATA_ADDR) ? {24'h00_0000, UART_TXDATA_REG} :
                     (PAddr[11:0] == UART_RXDATA_ADDR) ? {24'h00_0000, UART_RXDATA_REG} :
-                                                         32'hxxxx_xxxx;
+                                                         32'h0000_0000;
 
     always_ff @(posedge PCLK or posedge PRESET) begin
         if (PRESET) begin

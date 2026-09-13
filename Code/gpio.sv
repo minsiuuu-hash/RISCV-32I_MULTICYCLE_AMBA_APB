@@ -23,10 +23,17 @@ module apb_gpio (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
+    // synthesis translate_off
+    always @(posedge PCLK) begin
+        if (!PRESET && PREADY && !(PAddr[11:0] == GPIO_CTL_ADDR || PAddr[11:0] == GPIO_ODATA_ADDR || PAddr[11:0] == GPIO_IDATA_ADDR))
+            $warning("GPIO: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
+    end
+    // synthesis translate_on
+
     assign PRDATA = (PAddr[11:0] == GPIO_CTL_ADDR) ? {16'h0000,GPIO_CTL_REG} :
                     (PAddr[11:0] == GPIO_ODATA_ADDR) ? {16'h0000,GPIO_ODATA_REG} :
                     (PAddr[11:0] == GPIO_IDATA_ADDR) ? {16'h0000,GPIO_IDATA_REG} :
-                    32'hxxxx_xxxx;
+                    32'h0000_0000;  // Unmapped offset: read zero.
 
     always_ff @(posedge PCLK, posedge PRESET) begin
         if (PRESET) begin

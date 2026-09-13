@@ -88,11 +88,39 @@ The APB master is implemented with three main states.
 
 The transfer is completed when the selected slave asserts `PREADY`.
 
+The decoder compares `PAddr[31:12]` to select exactly one 4 KiB slave page.
+The response MUX uses the same `PSEL` vector instead of decoding the address again.
+For a mapped slave, completion is accepted only in `ACCESS` and still waits for that slave's `PREADY`.
+
+### Unmapped Address Behavior
+
+- An unmapped slave address selects no physical peripheral. The master completes the request in `ACCESS`, returning zero for reads and ignoring writes.
+- An undefined register offset within GPO, GPI, GPIO, FND, or UART also reads as zero; writes to undefined offsets are ignored.
+- Simulation-only warnings identify these accesses. These warnings are excluded from synthesis.
+- `PSLVERR` and CPU exception handling are not implemented. Software cannot distinguish a default zero response from valid zero data.
+
+### Load MEM / WB Timing
+
+Loads wait for `bus_ready` in `MEM`. At the completion edge, the existing data register captures `bus_rdata` and the CPU enters `WB`.
+During the one-cycle `WB` state, `rf_we` is asserted independently of `bus_ready`; the following rising edge writes the captured value into the register file.
+
+```text
+MEM: wait for bus_ready
+  -> completion edge: bus_rdata -> o_mem_drdata; enter WB
+WB: rf_we = 1
+  -> next edge: previous o_mem_drdata -> register file; enter FETCH
+```
+
+`U_MEM_REG_DRDATA` remains an ordinary register that samples every clock; no new `mem_data_en` control signal is used.
+At the WB edge, nonblocking assignments let the register file use the pre-edge value even if the data register samples a different bus value at the same edge.
+Stores continue to wait for completion in `MEM` and then return to `FETCH`.
+
 ## Memory-Mapped I/O
 
 In this project, ROM, RAM, and APB peripherals were assigned to specific address ranges using a memory map.
 
-The RISC-V processor accesses each device through load/store instructions, and the address decoder selects the corresponding memory or peripheral based on the accessed address.
+Instruction ROM connects directly to the CPU's instruction address/data interface.
+Load/store requests use the APB data bus to access RAM and peripherals; instruction ROM is not selected by the APB decoder.
 
 GPO, GPI, GPIO, FND, and UART were mapped as APB peripherals, enabling the processor to control external I/O, display output, and serial communication through memory-mapped I/O.
 
@@ -100,7 +128,8 @@ GPO, GPI, GPIO, FND, and UART were mapped as APB peripherals, enabling the proce
 
 | Address Range | Size | Region | Description |
 |---|---:|---|---|
-| `0x0000_0000 ~ 0x0000_0FFF` | 4 KB | ROM | Instruction Memory |
+| `0x0000_0000 ~ 0x0000_03FF` | 1 KiB | ROM | Current instruction array: 256 x 32 bits; separate instruction interface |
+| `0x0000_0400 ~ 0x0000_0FFF` | 3 KiB | Unimplemented | No instruction storage in the current RTL |
 | `0x0000_1000 ~ 0x0000_1FFF` | 4 KB | Reserved | Not Used |
 | `0x1000_0000 ~ 0x1000_0FFF` | 4 KB | RAM | Data Memory |
 | `0x1000_1000 ~ 0x1000_1FFF` | 4 KB | Reserved | Not Used |
@@ -127,3 +156,19 @@ GPO, GPI, GPIO, FND, and UART were mapped as APB peripherals, enabling the proce
 - Load/store instructions are used to access both RAM and memory-mapped peripherals.
 - The APB master handles address decoding, slave selection, and `PREADY`-based handshake.
 - GPO, GPI, GPIO, FND, and UART were connected as memory-mapped APB peripherals.
+
+## Simulation Tests
+
+Run `tests\run_load_timing.cmd` on Windows. It runs both the APB address regression and the load timing test.
+The default tool location is `C:\Xilinx\Vivado\2023.2\bin`; set `VIVADO_BIN` for another installation.
+See [tests/README.md](tests/README.md) for details. Generated files remain under the ignored `tests/build/` directory.
+
+Verified with Vivado Simulator 2023.2:
+
+- 77 APB transfers covering valid registers, page boundaries, formerly aliased addresses, undefined offsets, ignored writes, and slave wait states.
+- Original `apb_bram.mem` program: RAM words 0/1/2 and registers x13/x12/x11 receive `0x41`/`0x42`/`0x43`.
+- Read data valid only in the completion cycle, with 0/1/4 additional wait cycles: capture at MEM completion, register-file write on the next edge, and no duplicate requests.
+- A dependent ADDI and store use the final load value and write `0x44` to RAM.
+
+The current memory access path supports aligned 32-bit `LW`/`SW`; byte/halfword accesses and misalignment handling are not implemented.
+The tests do not establish complete RV32I compliance, full peripheral verification, or FPGA synthesis/timing closure.
