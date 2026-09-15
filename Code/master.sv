@@ -55,14 +55,6 @@ module master (
     logic [31:0] PAddr_next, PWData_next;
     logic PWRITE_next;
 
-    // synthesis translate_off
-    always @(posedge PCLK) begin
-        if (!PRESET && PENABLE &&
-            ({PSEL5, PSEL4, PSEL3, PSEL2, PSEL1, PSEL0} == 6'b0))
-            $warning("APB: unmapped address %h (write=%b); completing with zero data",
-                     PAddr, PWRITE);
-    end
-    // synthesis translate_on
 
     // SL
     always_ff @(posedge PCLK, posedge PRESET) begin
@@ -179,7 +171,7 @@ module addr_decoder (
                 20'h20002: psel3 = 1'b1;  // GPIO
                 20'h20003: psel4 = 1'b1;  // FND
                 20'h20004: psel5 = 1'b1;  // UART
-                default: ;  // Unmapped: no physical slave selected.
+                default: ;  // 없는 주소가 들어오면 어떤 슬레이브도 선택하지 않습니다.
             endcase
         end
     end
@@ -239,7 +231,7 @@ module apb_mux (
                 Ready = access && PREADY5;
             end
             6'b000000: begin
-                // Default response: read zero / ignore writes, no wait forever.
+                // 없는 주소가 들어오면 읽기는 0 반환, 쓰기는 무시하고 ACCESS에서 완료합니다.
                 Ready = access;
             end
             default: ;

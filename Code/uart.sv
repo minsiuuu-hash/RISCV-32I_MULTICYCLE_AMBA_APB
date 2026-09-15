@@ -31,12 +31,7 @@ module uart (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
-    // synthesis translate_off
-    always @(posedge PCLK) begin
-        if (!PRESET && PREADY && !(PAddr[11:0] == UART_CTL_ADDR || PAddr[11:0] == UART_BAUD_ADDR || PAddr[11:0] == UART_STATUS_ADDR || PAddr[11:0] == UART_TXDATA_ADDR || PAddr[11:0] == UART_RXDATA_ADDR))
-            $warning("UART: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
-    end
-    // synthesis translate_on
+    // 없는 레지스터 주소(offset)가 들어오면 읽기는 0 반환, 쓰기는 무시합니다.
 
     assign TX_IN = UART_TXDATA_REG;
     assign BPS = UART_BAUD_REG;

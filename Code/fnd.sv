@@ -25,12 +25,7 @@ module fnd (
 
     assign PREADY = (PENABLE && PSEL) ? 1'b1 : 1'b0;
 
-    // synthesis translate_off
-    always @(posedge PCLK) begin
-        if (!PRESET && PREADY && !(PAddr[11:0] == FND_ADDR))
-            $warning("FND: unmapped register offset at %h (write=%b)", PAddr, PWRITE);
-    end
-    // synthesis translate_on
+    // 없는 레지스터 주소(offset)가 들어오면 읽기는 0 반환, 쓰기는 무시합니다.
 
     assign PRDATA = (PAddr[11:0] == FND_ADDR) ? {16'h0000,FND_ODATA_REG} : 32'h0000_0000;
 
