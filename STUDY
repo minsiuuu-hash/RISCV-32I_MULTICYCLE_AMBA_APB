@@ -280,8 +280,8 @@ GPIO(General Purpose Input / Output)
                   assign idr[i]     = cr[i] ? 1'bz : io_port[i];  // input mode : read current pin value
               end
           endgenerate
-  출력모드 : FPGA가 외부로 0/1의 값을 내보냄
-  입력모드 : FPGA가 값을 안건들이기 위해서 Z(High Impedence) 상태로 놔둠.
+  출력모드 : FPGA가 외부로 0/1의 값을 내보냄(FPGA가 값을 결정함)
+  입력모드 : FPGA가 값을 안건들이기 위해서 Z(High Impedence) 상태로 놔둠.(외부에 의해서 값이 결정됨)
               assign io_port[i] = 1'bz;  >> FPGA는 io_port 값을 건드리지 않음.
               assign idr[i] = io_port[i]; >> 외부의 값을 받아서 idr에 값을 넣음.
 여기서는 push-pull gpio이고 open-drain이나 pull-up/down 저항 사용 x
