@@ -305,13 +305,13 @@ GPO(General Purpose Output)
 
 -------------------------------------------------------------------------------------
 면접 예상 질문
-1. Single > Multi 만들때, Register는 왜 저기에다가 추가한거에요? 목적??
+1. "Single > Multi 만들때, Register는 왜 저기에다가 추가한거에요? 목적??"
 “Multi-Cycle에서는 명령어 수행이 여러 Clock에 걸쳐 진행되기 때문에, 이전 State에서 생성한 값을 다음 State에서도 사용하려면 중간에 Register에 저장해둘 필요가 있습니다. 그래서 실제로 다음 단계에서 계속 필요한 값이 있는 경계에 Register를 추가했습니다.
 Decode에서 읽은 RS1, RS2와 생성한 Immediate는 Execute 단계에서 필요하기 때문에 Decode와 Execute 사이에 저장했고, Execute에서 계산한 ALU Result와 Store Data인 RS2는 MEM 단계에서 필요하기 때문에 Execute와 MEM 사이에 저장했습니다. Load의 경우 MEM에서 읽은 DRDATA를 WB 단계에서 Register File에 써야 하므로 MEM과 WB 사이에 저장했습니다. PC 경로도 계산된 다음 PC 값을 필요한 시점까지 유지하기 위해 Register를 추가했습니다.”
 
-2. “동일 C 코드로 작동했다고 했는데, C를 Assembly로 바꾸고 .mem 파일로 만들면 명령어마다 Binary 값이 다르잖아요. 그걸 직접 일일이 해석한 건가요? 그리고 Vivado Simulation은 이상적인데 어떻게 최적 Clock Period를 구한 건가요?”
-C → RISC-V Compiler → Assembly → Assembler → Machine Code → .mem → Instruction Memory
-“Implementation 이후 Timing Report에서는 FPGA에 배치·배선된 결과를 기반으로 C2Q, Logic Delay, Routing Delay와 Setup 조건, Clock Skew/Uncertainty 등을 고려해서 STA를 수행하고 WNS를 계산합니다. 그래서 저는 XDC의 Clock Period를 줄여가며 WNS가 Negative가 되지 않는 범위를 확인했습니다.”
+2. “Single-Cycle과 Multi-Cycle에서 동일한 C 프로그램을 실행했다고 했는데, 그 C 코드를 실제 CPU가 실행할 수 있는 .mem으로 어떻게 만들었는가? 그걸 직접 일일이 해석한 건가요? 그리고 Vivado Simulation은 이상적인데 어떻게 최적 Clock Period를 구한 건가요?”
+C 코드를 직접 명령어별 binary로 일일이 변환한 것은 아니고, RISC-V compiler와 assembler를 통해 machine code로 변환한 뒤 .mem 형태로 Instruction Memory에 넣었습니다. Simulation에서는 PC에 따라 실행되는 명령어와 register 값, 연산 결과를 waveform으로 확인했습니다.
+Implementation 이후 Timing Report에서는 FPGA에 배치·배선된 결과를 기반으로 C2Q, Logic Delay, Routing Delay와 Setup 조건, Clock Skew/Uncertainty 등을 고려해서 STA를 수행하고 WNS를 계산합니다. 그래서 저는 XDC의 Clock Period를 줄여가며 WNS가 Negative가 되지 않는 범위를 확인했습니다.
 
 3. APB Master짤때, PSEL,PENABLE 활성화 시키는 걸 계속 반복해도 되는거아닌가요?? (IDLE > SETUP > ACCESS > SETUP > ACCESS) 이런식으로 설계한다는 말인듯??
 APB는 Burst는 없지만 Back-to-Back Transfer는 가능하고, 같은 Slave라면 PSEL을 계속 유지할 수 있다. 다만 Transfer마다 SETUP/ACCESS는 새로 수행하며, Slave가 바뀌면 PSEL도 바뀐다.
