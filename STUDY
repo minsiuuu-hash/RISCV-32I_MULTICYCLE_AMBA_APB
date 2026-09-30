@@ -3,6 +3,8 @@ AMBA BUS (Advanced Microcontroller Bus Architecture)
 = CPU, Memory, Peripheral 등 여러 IP(Block) 사이에서 Address/Data/Control 신호를 주고받기 위한 Protocol.
 = 대표적으로 AHB, APB, AXI가 사용됨.
 
+IP(Intellectual Property) = FPGA 설계에서 재사용할 수 있도록 만든 하드웨어 기능 블록
+
 1. BUS
 1) 데이터(Data), 주소(Address), 제어(Control) 신호들의 묶음을 의미.
 2) CPU, Memory, Peripheral 등 여러 장치가 데이터를 주고받기 위한 통신 경로.
