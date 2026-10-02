@@ -34,7 +34,7 @@ BUS/Interconnect를 사용하면 여러 IP가 정해진 Protocol에 따라 통�
 
 3. APB (Advanced Peripheral Bus)
 1) 저속 Peripheral용 버스.
-   → UART, SPI, I2C, GPIO, Timer 등의 Register Access에 주로 사용.
+   → UART, SPI, I2C, GPIO, Timer 등의 Register Access에 주로 사용(단순한 주변장치 제어를 목적으로 설계).
 2) 구조가 단순하고 저전력, 저복잡도가 특징.
 3) Pipeline을 사용하지 않는 Non-Pipeline 구조.
 4) 기본적으로 하나의 Transfer가 SETUP → ACCESS 단계로 진행됨.
