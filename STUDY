@@ -15,7 +15,7 @@ BUS/Interconnect를 사용하면 여러 IP가 정해진 Protocol에 따라 통�
 2. AHB (Advanced High-performance Bus)
 1) 비교적 고속의 시스템 버스로 CPU, Memory, DMA, Peripheral 등에 사용.
 2) Address Phase와 Data Phase를 겹쳐 처리하는 Pipeline 구조.
-   → 이전 Transaction의 Data 전송 중 다음 Transaction의 Address 전달 가능.
+   → 이전 Transaction의 Data 전송 중 다음 Transaction의 Address 전달 가능(예시로, Data A와 Address B).
    → Throughput 향상.
 3) Burst Transfer 지원.
    → 여러 개의 연속된 데이터를 한 번의 주소 흐름으로 전송 가능.
