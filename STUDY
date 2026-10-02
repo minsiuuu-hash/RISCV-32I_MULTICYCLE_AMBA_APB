@@ -24,12 +24,7 @@ Slave
 
 예)
 CPU가 UART Register에 데이터를 Write
-
-CPU (Master)
-↓
-Address + Write Data
-↓
-UART (Slave)
+CPU (Master) → UART Address + Write Data → UART (Slave)
 
 3. Address Decoder
    = Master가 보낸 Address를 확인하여 어떤 Slave에 접근하는지 결정하는 회로.
