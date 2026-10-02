@@ -6,7 +6,7 @@ AMBA BUS (Advanced Microcontroller Bus Architecture)
 IP(Intellectual Property) = FPGA 설계에서 재사용할 수 있도록 만든 하드웨어 기능 블록
 
 1. BUS
-1) 데이터(Data), 주소(Address), 제어(Control) 신호들의 묶음을 의미.
+1) 장치/IP 사이에서 정보를 전달하기 위한 신호들의 집합 또는 통신 경로. Memory-Mapped Bus에서는 주로 Address/Data/Control 신호로 구성됨.
 2) CPU, Memory, Peripheral 등 여러 장치가 데이터를 주고받기 위한 통신 경로.
 3) 여러 Slave가 연결되어 있어도 Address Decoder에 의해 선택된 Slave만 해당 Transaction에 반응.
 4) SoC에서는 하나의 Bus만 사용하는 것이 아니라 성능과 용도에 따라 AXI, AHB, APB 등을 함께 사용하기도 함.
@@ -94,7 +94,7 @@ AXI의 5개 Channel
 5. AXI 종류
 1) AXI4
    * Full AXI Protocol.
-   * Burst 지원(번 주소를 다시 보내는 게 아니라 시작 주소 + Burst 정보를 보내고 여러 Data Beat를 전송하는 구조).
+   * Burst 지원(매번 주소를 다시 보내는 게 아니라 시작 주소 + Burst 정보를 보내고 여러 Data Beat를 전송하는 구조).
    * 고성능 Memory/Data Transfer에 적합.
    * CPU ↔ DDR, DMA ↔ Memory 등에 사용.
 2) AXI4-Lite
@@ -207,7 +207,7 @@ APB < AHB < AXI
 [ Burst ]
 Burst
 = 한 번의 Burst 요청으로 여러 개의 Data Beat를 연속 전송하는 기능
-= 시작 주소와 Burst 정보를 한 번 전달하고, 이후 여러 Beat를 연속으로 전송한다
+= 여러 개의 Data Beat를 하나의 연속된 Transaction 묶음으로 전송하는 방식. 프로토콜에 따라 주소 전달 방식은 다름.
 Master -> Transaction 시작 -> 주소 + Burst 관련 정보 전달 -> Slave / Interconnect가 해석 -> 몇 Beat인지 -> Beat 크기가 얼마인지 -> 주소가 FIXED / INCR / WRAP인지 판단 -> 그 규칙대로 Data Transfer 진행
 
 Beat
@@ -249,7 +249,7 @@ APB FSM
 총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
 READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호(Transfer)를 활용하면서, PWRITE로 정함.
 SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
-ACCESS STATE에서는 PREADY(PENABLE && PSELx)를 통해 HandShake함.
+ACCESS State에서 PSEL=1, PENABLE=1인 상태에서 PREADY=1이 되면 Transfer가 완료됨.
 
 Write = CPU > MASTER > SLAVE (SLAVE에 값을 저장, 그 값은 PWDATA를 통해 전달됨)
 Read = CPU > MASTER > SLAVE(저장되어있는 값을 PRDATA로 전달) > MASTER > CPU(RegisterFile에 저장)
@@ -263,7 +263,7 @@ CPU는 하나의 전체 주소공간으로 RAM과 I/O를 접근한다.
 ex) CPU Addr = 0x2010, Ram Addr= 0x0010. CPU Addr = 0x4001, 8255 Addr = 0x0001.
     CPU Addr - Ram Addr = 0x2000으로 RAM Memory Map 시작 주소 = 0x2000
     CPU Addr - 8255 Addr = 0x4000으로 8255 Memory Map 시작 주소 = 0x4000
-offset 개념으로 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
+offset 개념으로 현재 코드 구현에서는 CPU의 상위 3비트는 ChipSelect/ChipEnable의 기능이므로, 실제 Slave의 주소는 다름.
 offset = 기준점에서 얼마나 떨어져 있냐를 나타내는 값
 
 peripherals(slave), ram 등을 제외하고 Memory Map에 많은 빈공간이 존재하는데,
