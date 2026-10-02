@@ -94,7 +94,7 @@ AXI의 5개 Channel
 5. AXI 종류
 1) AXI4
    * Full AXI Protocol.
-   * Burst 지원.
+   * Burst 지원(번 주소를 다시 보내는 게 아니라 시작 주소 + Burst 정보를 보내고 여러 Data Beat를 전송하는 구조).
    * 고성능 Memory/Data Transfer에 적합.
    * CPU ↔ DDR, DMA ↔ Memory 등에 사용.
 2) AXI4-Lite
