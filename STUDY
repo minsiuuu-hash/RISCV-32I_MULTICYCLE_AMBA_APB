@@ -175,17 +175,17 @@ APB Back-to-Back
 AHB/AXI Burst
 = 여러 Data Beat를 하나의 Burst로 묶어 연속 수행
 
-8. AHB / APB / AXI 비교
-                    AHB                 APB                 AXI
-용도              시스템 통신          저속 Peripheral      고성능 시스템 통신
-성능              중~고속              저속                 고속
-구조              중간                 단순                 복잡
-Pipeline          O                    X                    O
-Burst             O                    X                    O
-Handshake         HREADY 중심          PREADY 중심          VALID / READY
-주 사용처          CPU, Memory, DMA     UART, GPIO, Timer    CPU, DDR, DMA
-채널 분리          X                    X                    O
-병렬 처리 능력      제한적               거의 없음             높음
+8. APB / AHB / AXI4 비교
+                        APB                 AHB                 AXI4
+용도                    저속 Peripheral     시스템 통신          고성능 시스템 통신
+성능                    저속                중~고속              고속
+구조                    단순                중간                 복잡
+Pipeline                X                   O                    O
+Burst                   X                   O                    O
+Handshake               PREADY 중심         HREADY 중심          VALID / READY
+주 사용처                UART, GPIO, Timer   CPU, Memory, DMA     CPU, DDR, DMA
+채널 분리                X                   X                    O
+병렬 처리 능력           거의 없음           제한적               높음
 
 9. 일반적인 SoC 구조 예시
 CPU / Processor
