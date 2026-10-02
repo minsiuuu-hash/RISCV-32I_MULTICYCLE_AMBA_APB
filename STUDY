@@ -6,11 +6,11 @@ AMBA BUS (Advanced Microcontroller Bus Architecture)
 IP(Intellectual Property) = FPGA 설계에서 재사용할 수 있도록 만든 하드웨어 기능 블록
 
 1. BUS
-1) 장치/IP 사이에서 정보를 전달하기 위한 신호들의 집합 또는 통신 경로. Memory-Mapped Bus에서는 주로 Address/Data/Control 신호로 구성됨.
-2) CPU, Memory, Peripheral 등 여러 장치가 데이터를 주고받기 위한 통신 경로.
-3) 여러 Slave가 연결되어 있어도 Address Decoder에 의해 선택된 Slave만 해당 Transaction에 반응.
-4) SoC에서는 하나의 Bus만 사용하는 것이 아니라 성능과 용도에 따라 AXI, AHB, APB 등을 함께 사용하기도 함.
-BUS/Interconnect를 사용하면 여러 IP가 정해진 Protocol에 따라 통신할 수 있어 연결 구조와 확장, 제어, 검증이 쉬워진다.
+1) CPU, Memory, Peripheral 등 장치/IP 사이에서 정보를 전달하기 위한 신호들의 집합 또는 통신 경로.
+   → Memory-Mapped Bus에서는 주로 Address / Data / Control 신호로 구성됨.
+2) 여러 Slave가 연결되어 있어도 Address Decoder에 의해 선택된 Slave만 해당 Transaction에 반응.
+3) SoC에서는 성능과 용도에 따라 AXI, AHB, APB 등을 함께 사용하기도 함.
+4) 정해진 Protocol에 따라 여러 IP를 연결함으로써 시스템의 연결, 확장, 제어 및 검증을 용이하게 함.
 
 2. AHB (Advanced High-performance Bus)
 1) 비교적 고속의 시스템 버스로 CPU, Memory, DMA, Peripheral 등에 사용.
@@ -19,7 +19,7 @@ BUS/Interconnect를 사용하면 여러 IP가 정해진 Protocol에 따라 통�
    → Throughput 향상.
 3) Burst Transfer 지원.
    → 여러 개의 연속된 데이터를 한 번의 주소 흐름으로 전송 가능.
-4) Multi-Master 구조 지원 가능.
+4) Multi-Master 구조 지원 가능(AHB), AHB-lite는 Single-Master.
    → CPU, DMA 등 여러 Master가 하나의 Bus를 사용할 수 있음.
    → Arbitration을 통해 어느 Master가 Bus를 사용할지 결정.
 5) AXI보다 구조가 단순하지만 APB보다는 성능과 구조가 복잡함.
@@ -206,8 +206,8 @@ APB < AHB < AXI
 
 [ Burst ]
 Burst
-= 한 번의 Burst 요청으로 여러 개의 Data Beat를 연속 전송하는 기능
-= 여러 개의 Data Beat를 하나의 연속된 Transaction 묶음으로 전송하는 방식. 프로토콜에 따라 주소 전달 방식은 다름.
+= 여러 개의 Data Beat를 하나의 연속된 Transaction 묶음으로 전송하는 방식.
+= 프로토콜에 따라 Burst 정보와 Address 전달 방식은 다름.
 Master -> Transaction 시작 -> 주소 + Burst 관련 정보 전달 -> Slave / Interconnect가 해석 -> 몇 Beat인지 -> Beat 크기가 얼마인지 -> 주소가 FIXED / INCR / WRAP인지 판단 -> 그 규칙대로 Data Transfer 진행
 
 Beat
@@ -223,16 +223,18 @@ AHB
 - 첫 Transfer : NONSEQ
 - 이후 Transfer : SEQ
 - INCR4, INCR8, INCR16, WRAP4 등 지원
+- 각 Beat마다 Address Phase가 존재
 
-AXI
-- AWADDR / ARADDR : 시작 주소
-- AWLEN / ARLEN   : Burst Length
-- AWSIZE / ARSIZE : 한 Beat의 데이터 크기
+AXI4
+- 시작 Address와 Burst 정보를 Address Channel을 통해 전달한 후 여러 Data Beat를 전송
+- AWADDR / ARADDR   : 시작 Address
+- AWLEN / ARLEN     : Burst Length
+- AWSIZE / ARSIZE   : 한 Beat의 데이터 크기
 - AWBURST / ARBURST : FIXED / INCR / WRAP
-- 마지막 Beat는 WLAST / RLAST로 표시
+- 마지막 Beat : WLAST / RLAST
 
 APB
-- Burst 기능 없음
+- Burst 지원 X
 - Back-to-Back Transfer는 가능
 - 각각의 SETUP → ACCESS가 독립적인 Transfer
 
