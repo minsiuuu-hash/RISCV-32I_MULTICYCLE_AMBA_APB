@@ -71,7 +71,7 @@ IP(Intellectual Property) = FPGA 설계에서 재사용할 수 있도록 만든 
 2) CPU, DDR Memory Controller, DMA, 고성능 IP 등 대용량 데이터 전송에 사용.
 3) AHB와 가장 큰 차이점 중 하나는 Address/Data/Response가 각각 독립된 Channel로 분리되어 있다는 것.
 
-AXI의 5개 Channel
+AXI4 Memory-Mapped의 5개 Channel
 - AW : Write Address Channel
 - W  : Write Data Channel
 - B  : Write Response Channel
