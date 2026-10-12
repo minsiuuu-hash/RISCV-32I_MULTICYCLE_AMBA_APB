@@ -358,4 +358,8 @@ PENABLE       0         1         0         1
 - 어떤 Slave에도 할당되지 않은 주소는 모든 PSEL이 0이므로, 마스터의 응답 MUX에서 Rdata=0을 반환하고 ACCESS 단계에서 Ready=1을 생성합니다. 선택된 Slave가 없으므로 쓰기도 반영되지 않습니다.
 - Slave 내부의 미구현 레지스터 주소는 해당 Slave가 선택되지만 일치하는 레지스터가 없으므로, Slave에서 PRDATA=0을 반환하고 레지스터 쓰기를 수행하지 않습니다. PSEL && PENABLE일 때 PREADY=1을 생성하고, MUX가 이를 CPU 측 Ready로 전달합니다.
 
-5. 
+5. APB Master 안에 Address Decoder와 MUX가 있는데, 이것들은 원래 Interconnect의 역할 아닌가요? 왜 Master에 포함했나요?
+Master는 트랜잭션의 진행을 제어하고, Interconnect는 Slave 선택과 신호 전달을 담당한다는 차이가 있습니다.
+Address Decoder는 접근 주소를 해석해 Slave를 선택하고, MUX는 선택된 Slave의 Read Data와 Ready 응답을 Master로 전달하는 역할을 합니다.
+제가 구현한 시스템은 하나의 CPU가 Master 역할을 하고 여러 Peripheral에 접근하는 비교적 단순한 구조였기 때문에, 별도의 Interconnect 모듈로 분리하지 않고 하나의 APB 상위 모듈에 통합하여 구성했습니다.
+
