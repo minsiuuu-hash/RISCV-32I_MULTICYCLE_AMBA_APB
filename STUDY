@@ -358,3 +358,4 @@ PENABLE       0         1         0         1
 - 어떤 Slave에도 할당되지 않은 주소는 모든 PSEL이 0이므로, 마스터의 응답 MUX에서 Rdata=0을 반환하고 ACCESS 단계에서 Ready=1을 생성합니다. 선택된 Slave가 없으므로 쓰기도 반영되지 않습니다.
 - Slave 내부의 미구현 레지스터 주소는 해당 Slave가 선택되지만 일치하는 레지스터가 없으므로, Slave에서 PRDATA=0을 반환하고 레지스터 쓰기를 수행하지 않습니다. PSEL && PENABLE일 때 PREADY=1을 생성하고, MUX가 이를 CPU 측 Ready로 전달합니다.
 
+5. 
