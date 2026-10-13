@@ -102,8 +102,7 @@ AXI4 Memory-Mapped의 5개 Channel
 5) 독립된 모든 채널에서 VALID / READY Handshake 방식 각각 사용.
    VALID = 보내는 쪽에서 "유효한 데이터가 있다."
    READY = 받는 쪽에서 "받을 준비가 됐다."
-   VALID = 1 && READY = 1
-   → 해당 Clock에서 Transfer 발생.
+   VALID = 1 && READY = 1 → 해당 Clock에서 Transfer 발생.
 6) Burst Transfer 지원.
    → 하나의 Address Transaction 이후 여러 Data Beat를 연속 전송 가능.
 7) 여러 Transaction을 동시에 진행할 수 있어 높은 Throughput을 얻을 수 있음.
