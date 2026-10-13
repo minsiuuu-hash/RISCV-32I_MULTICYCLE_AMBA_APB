@@ -51,7 +51,7 @@ CPU가 0x1004에 Write → Address Decoder가 UART 영역이라고 판단 → UA
    * PENABLE = 0
 6) ACCESS Phase
    * PENABLE = 1
-   * Slave가 PREADY = 1을 출력하면 Transaction 완료
+   * Slave가 PREADY = 1을 출력하면 Transaction 완료(Master가 요청한 Read 또는 Write 전송이 완료)
    * PREADY = 0이면 ACCESS 상태에서 대기(Wait State), ACCESS가 연장되는 동안 Address / Control / Write Data 신호는 유지되어야 함.
 7) 대표 신호
    * PADDR    : Address
