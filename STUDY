@@ -230,7 +230,7 @@ APB < AHB < AXI
 ==============================================================================================
 
 APB FSM
-총 3개의 STATE를 사용, IDLE, SETUP, ACCESS.
+총 3개의 STATE를 사용(IDLE, SETUP, ACCESS).
 READ/WRITE를 구분하기 위해서, ReadRequest/WriteRequest 신호(Transfer)를 활용하면서, PWRITE로 정함.
 SETUP STATE에서는 decode_en을 활용하여, PSEL값을 선택함.
 ACCESS State에서 PSEL=1, PENABLE=1인 상태에서 PREADY=1이 되면 Transfer가 완료됨.
