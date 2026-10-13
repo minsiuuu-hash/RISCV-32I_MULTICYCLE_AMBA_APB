@@ -99,7 +99,7 @@ AXI4 Memory-Mapped의 5개 Channel
 - R  : Read Data Channel
 
 4) Read와 Write Channel이 독립적이기 때문에 Read/Write Transaction을 병렬적으로 처리 가능.
-5) VALID / READY Handshake 방식 사용.
+5) 독립된 모든 채널에서 VALID / READY Handshake 방식 각각 사용.
    VALID = 보내는 쪽에서 "유효한 데이터가 있다."
    READY = 받는 쪽에서 "받을 준비가 됐다."
    VALID = 1 && READY = 1
