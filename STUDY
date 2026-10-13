@@ -26,15 +26,11 @@ CPU가 UART Register에 데이터를 Write 과정 = CPU (Master) → UART Addres
 
 3. Address Decoder
    = Master가 보낸 Address를 확인하여 어떤 Slave에 접근하는지 결정하는 회로.
-
 예)
 0x0000 ~ 0x0FFF : RAM
 0x1000 ~ 0x10FF : UART
 0x2000 ~ 0x20FF : GPIO
-
-CPU가 0x1004에 Write
-→ Address Decoder가 UART 영역이라고 판단
-→ UART Slave만 선택됨.
+CPU가 0x1004에 Write → Address Decoder가 UART 영역이라고 판단 → UART Slave만 선택됨.
 
 4. APB (Advanced Peripheral Bus)
 1) 저속 Peripheral용 버스.
